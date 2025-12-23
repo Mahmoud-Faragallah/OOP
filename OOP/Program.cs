@@ -6,55 +6,65 @@
 ---------- - >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Core of Procedure <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-------------------------------------------*/
 
 using System;
-using System.Collections.Generic;
 
 namespace StudentManagementSystem
 {
     // ===================== Student =====================
     public class Student
     {
-        public int StudentId { get; set; }
-        public string Name { get; set; }
-        public int Age { get; set; }
-        public List<Course> Courses { get; set; }
+        public int StudentId;
+        public string Name;
+        public int Age;
 
-        public Student(int studentId, string name, int age)
+        public Course[] Courses;
+        public int CourseCount;
+
+        public Student(int id, string name, int age)
         {
-            StudentId = studentId;
+            StudentId = id;
             Name = name;
             Age = age;
-            Courses = new List<Course>();
+            Courses = new Course[10]; // max 10 courses
+            CourseCount = 0;
         }
 
         public bool Enroll(Course course)
         {
-            if (Courses.Contains(course))
-                return false;
+            for (int i = 0; i < CourseCount; i++)
+            {
+                if (Courses[i] == course)
+                    return false;
+            }
 
-            Courses.Add(course);
+            Courses[CourseCount++] = course;
             return true;
         }
 
         public string PrintDetails()
         {
-            string courseList = Courses.Count == 0
-                ? "None"
-                : string.Join(", ", Courses.ConvertAll(c => c.Title));
+            string courseNames = CourseCount == 0 ? "None" : "";
 
-            return $"ID: {StudentId}, Name: {Name}, Age: {Age}, Courses: {courseList}";
+            for (int i = 0; i < CourseCount; i++)
+            {
+                courseNames += Courses[i].Title;
+                if (i < CourseCount - 1)
+                    courseNames += ", ";
+            }
+
+            return $"ID: {StudentId}, Name: {Name}, Age: {Age}, Courses: {courseNames}";
         }
     }
 
     // ===================== Instructor =====================
     public class Instructor
     {
-        public int InstructorId { get; set; }
-        public string Name { get; set; }
-        public string Specialization { get; set; }
+        public int InstructorId;
+        public string Name;
+        public string Specialization;
 
-        public Instructor(int instructorId, string name, string specialization)
+        public Instructor(int id, string name, string specialization)
         {
-            InstructorId = instructorId;
+            InstructorId = id;
             Name = name;
             Specialization = specialization;
         }
@@ -68,13 +78,13 @@ namespace StudentManagementSystem
     // ===================== Course =====================
     public class Course
     {
-        public int CourseId { get; set; }
-        public string Title { get; set; }
-        public Instructor Instructor { get; set; }
+        public int CourseId;
+        public string Title;
+        public Instructor Instructor;
 
-        public Course(int courseId, string title, Instructor instructor)
+        public Course(int id, string title, Instructor instructor)
         {
-            CourseId = courseId;
+            CourseId = id;
             Title = title;
             Instructor = instructor;
         }
@@ -85,26 +95,23 @@ namespace StudentManagementSystem
         }
     }
 
-    // ===================== SchoolStudentManager (IMPORTANT NAME) =====================
+    // ===================== SchoolStudentManager =====================
     public class SchoolStudentManager
     {
-        public List<Student> Students { get; set; }
-        public List<Course> Courses { get; set; }
-        public List<Instructor> Instructors { get; set; }
+        public Student[] Students = new Student[50];
+        public Course[] Courses = new Course[50];
+        public Instructor[] Instructors = new Instructor[50];
 
-        public SchoolStudentManager()
-        {
-            Students = new List<Student>();
-            Courses = new List<Course>();
-            Instructors = new List<Instructor>();
-        }
+        public int StudentCount = 0;
+        public int CourseCount = 0;
+        public int InstructorCount = 0;
 
         public bool AddStudent(Student student)
         {
             if (FindStudent(student.StudentId) != null)
                 return false;
 
-            Students.Add(student);
+            Students[StudentCount++] = student;
             return true;
         }
 
@@ -113,7 +120,7 @@ namespace StudentManagementSystem
             if (FindInstructor(instructor.InstructorId) != null)
                 return false;
 
-            Instructors.Add(instructor);
+            Instructors[InstructorCount++] = instructor;
             return true;
         }
 
@@ -122,23 +129,35 @@ namespace StudentManagementSystem
             if (FindCourse(course.CourseId) != null)
                 return false;
 
-            Courses.Add(course);
+            Courses[CourseCount++] = course;
             return true;
         }
 
-        public Student FindStudent(int studentId)
+        public Student FindStudent(int id)
         {
-            return Students.Find(s => s.StudentId == studentId);
+            for (int i = 0; i < StudentCount; i++)
+                if (Students[i].StudentId == id)
+                    return Students[i];
+
+            return null;
         }
 
-        public Course FindCourse(int courseId)
+        public Instructor FindInstructor(int id)
         {
-            return Courses.Find(c => c.CourseId == courseId);
+            for (int i = 0; i < InstructorCount; i++)
+                if (Instructors[i].InstructorId == id)
+                    return Instructors[i];
+
+            return null;
         }
 
-        public Instructor FindInstructor(int instructorId)
+        public Course FindCourse(int id)
         {
-            return Instructors.Find(i => i.InstructorId == instructorId);
+            for (int i = 0; i < CourseCount; i++)
+                if (Courses[i].CourseId == id)
+                    return Courses[i];
+
+            return null;
         }
 
         public bool EnrollStudentInCourse(int studentId, int courseId)
@@ -150,23 +169,6 @@ namespace StudentManagementSystem
                 return false;
 
             return student.Enroll(course);
-        }
-
-        // BONUS
-        public bool IsStudentEnrolledInCourse(int studentId, string courseName)
-        {
-            Student student = FindStudent(studentId);
-            if (student == null)
-                return false;
-
-            return student.Courses.Exists(c => c.Title == courseName);
-        }
-
-        // BONUS
-        public string GetInstructorNameByCourseName(string courseName)
-        {
-            Course course = Courses.Find(c => c.Title == courseName);
-            return course == null ? "Course not found" : course.Instructor.Name;
         }
     }
 
@@ -191,16 +193,14 @@ namespace StudentManagementSystem
                 Console.WriteLine("8. Find Student by ID");
                 Console.WriteLine("9. Find Course by ID");
                 Console.WriteLine("10. Exit");
-                Console.WriteLine("11. Check Student Enrollment (Bonus)");
-                Console.WriteLine("12. Get Instructor by Course Name (Bonus)");
-                Console.Write("Enter choice: ");
+                Console.Write("Choice: ");
 
                 choice = int.Parse(Console.ReadLine());
 
                 switch (choice)
                 {
                     case 1:
-                        Console.Write("Student ID: ");
+                        Console.Write("ID: ");
                         int sid = int.Parse(Console.ReadLine());
                         Console.Write("Name: ");
                         string sname = Console.ReadLine();
@@ -210,7 +210,7 @@ namespace StudentManagementSystem
                         break;
 
                     case 2:
-                        Console.Write("Instructor ID: ");
+                        Console.Write("ID: ");
                         int iid = int.Parse(Console.ReadLine());
                         Console.Write("Name: ");
                         string iname = Console.ReadLine();
@@ -239,49 +239,41 @@ namespace StudentManagementSystem
                         sid = int.Parse(Console.ReadLine());
                         Console.Write("Course ID: ");
                         cid = int.Parse(Console.ReadLine());
-                        Console.WriteLine(manager.EnrollStudentInCourse(sid, cid)
+
+                        Console.WriteLine(
+                            manager.EnrollStudentInCourse(sid, cid)
                             ? "Enrolled successfully"
-                            : "Enrollment failed");
+                            : "Enrollment failed"
+                        );
                         break;
 
                     case 5:
-                        manager.Students.ForEach(s => Console.WriteLine(s.PrintDetails()));
+                        for (int i = 0; i < manager.StudentCount; i++)
+                            Console.WriteLine(manager.Students[i].PrintDetails());
                         break;
 
                     case 6:
-                        manager.Courses.ForEach(c => Console.WriteLine(c.PrintDetails()));
+                        for (int i = 0; i < manager.CourseCount; i++)
+                            Console.WriteLine(manager.Courses[i].PrintDetails());
                         break;
 
                     case 7:
-                        manager.Instructors.ForEach(i => Console.WriteLine(i.PrintDetails()));
+                        for (int i = 0; i < manager.InstructorCount; i++)
+                            Console.WriteLine(manager.Instructors[i].PrintDetails());
                         break;
 
                     case 8:
                         Console.Write("Student ID: ");
                         sid = int.Parse(Console.ReadLine());
                         Student st = manager.FindStudent(sid);
-                        Console.WriteLine(st == null ? "Student not found" : st.PrintDetails());
+                        Console.WriteLine(st == null ? "Not found" : st.PrintDetails());
                         break;
 
                     case 9:
                         Console.Write("Course ID: ");
                         cid = int.Parse(Console.ReadLine());
                         Course cr = manager.FindCourse(cid);
-                        Console.WriteLine(cr == null ? "Course not found" : cr.PrintDetails());
-                        break;
-
-                    case 11:
-                        Console.Write("Student ID: ");
-                        sid = int.Parse(Console.ReadLine());
-                        Console.Write("Course Name: ");
-                        string cname = Console.ReadLine();
-                        Console.WriteLine(manager.IsStudentEnrolledInCourse(sid, cname));
-                        break;
-
-                    case 12:
-                        Console.Write("Course Name: ");
-                        cname = Console.ReadLine();
-                        Console.WriteLine(manager.GetInstructorNameByCourseName(cname));
+                        Console.WriteLine(cr == null ? "Not found" : cr.PrintDetails());
                         break;
                 }
 
