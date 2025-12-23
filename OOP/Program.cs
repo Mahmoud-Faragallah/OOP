@@ -1,4 +1,11 @@
-﻿using System;
+﻿/*----------- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Description <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< ------------------------------------------
+-- Developer Name  : Mahmoud Faragallah
+-- Creation Date   : 23 - 12 - 2025
+-- Modify Date     : 23 - 12 - 2025
+-- Description     : Lec7 Task (Student Management System)
+---------- - >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Core of Procedure <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<-------------------------------------------*/
+
+using System;
 using System.Collections.Generic;
 
 namespace StudentManagementSystem
