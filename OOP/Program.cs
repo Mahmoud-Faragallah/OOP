@@ -222,5 +222,110 @@ namespace StudentManagementSystem
                 Console.WriteLine("9. Find Course by ID");
                 Console.WriteLine("10. Exit");
                 Console.WriteLine("11. Check Student Enrollment (Bonus)");
-                Console.WriteLine("12. Get Instructor by Course
+                Console.WriteLine("12. Get Instructor by Course Name (Bonus)");
+                Console.Write("Choice: ");
 
+                choice = int.Parse(Console.ReadLine());
+
+                switch (choice)
+                {
+                    case 1:
+                        Console.Write("Student ID: ");
+                        int sid = int.Parse(Console.ReadLine());
+                        Console.Write("Name: ");
+                        string sname = Console.ReadLine();
+                        Console.Write("Age: ");
+                        int age = int.Parse(Console.ReadLine());
+                        manager.AddStudent(new Student(sid, sname, age));
+                        break;
+
+                    case 2:
+                        Console.Write("Instructor ID: ");
+                        int iid = int.Parse(Console.ReadLine());
+                        Console.Write("Name: ");
+                        string iname = Console.ReadLine();
+                        Console.Write("Specialization: ");
+                        string spec = Console.ReadLine();
+                        manager.AddInstructor(new Instructor(iid, iname, spec));
+                        break;
+
+                    case 3:
+                        Console.Write("Course ID: ");
+                        int cid = int.Parse(Console.ReadLine());
+                        Console.Write("Title: ");
+                        string title = Console.ReadLine();
+                        Console.Write("Instructor ID: ");
+                        int insId = int.Parse(Console.ReadLine());
+
+                        Instructor instructor = manager.FindInstructor(insId);
+                        if (instructor != null)
+                            manager.AddCourse(new Course(cid, title, instructor));
+                        else
+                            Console.WriteLine("Instructor not found");
+                        break;
+
+                    case 4:
+                        Console.Write("Student ID: ");
+                        sid = int.Parse(Console.ReadLine());
+                        Console.Write("Course ID: ");
+                        cid = int.Parse(Console.ReadLine());
+
+                        Console.WriteLine(
+                            manager.EnrollStudentInCourse(sid, cid)
+                            ? "Enrolled successfully"
+                            : "Enrollment failed"
+                        );
+                        break;
+
+                    case 5:
+                        for (int i = 0; i < manager.StudentCount; i++)
+                            Console.WriteLine(manager.Students[i].PrintDetails());
+                        break;
+
+                    case 6:
+                        for (int i = 0; i < manager.CourseCount; i++)
+                            Console.WriteLine(manager.Courses[i].PrintDetails());
+                        break;
+
+                    case 7:
+                        for (int i = 0; i < manager.InstructorCount; i++)
+                            Console.WriteLine(manager.Instructors[i].PrintDetails());
+                        break;
+
+                    case 8:
+                        Console.Write("Student ID: ");
+                        sid = int.Parse(Console.ReadLine());
+                        Student st = manager.FindStudent(sid);
+                        Console.WriteLine(st == null ? "Not found" : st.PrintDetails());
+                        break;
+
+                    case 9:
+                        Console.Write("Course ID: ");
+                        cid = int.Parse(Console.ReadLine());
+                        Course cr = manager.FindCourse(cid);
+                        Console.WriteLine(cr == null ? "Not found" : cr.PrintDetails());
+                        break;
+
+                    case 11:
+                        Console.Write("Student ID: ");
+                        sid = int.Parse(Console.ReadLine());
+                        Console.Write("Course Title: ");
+                        string ctitle = Console.ReadLine();
+                        Console.WriteLine(
+                            manager.IsStudentEnrolledInCourse(sid, ctitle)
+                            ? "Student is enrolled in this course"
+                            : "Student is NOT enrolled in this course"
+                        );
+                        break;
+
+                    case 12:
+                        Console.Write("Course Title: ");
+                        string ct = Console.ReadLine();
+                        Console.WriteLine(manager.GetInstructorNameByCourseName(ct));
+                        break;
+                }
+
+            } while (choice != 10);
+        }
+    }
+}
