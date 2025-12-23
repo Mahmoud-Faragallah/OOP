@@ -24,7 +24,7 @@ namespace StudentManagementSystem
             StudentId = id;
             Name = name;
             Age = age;
-            Courses = new Course[10]; // max courses per student
+            Courses = new Course[10]; 
             CourseCount = 0;
         }
 
@@ -171,7 +171,7 @@ namespace StudentManagementSystem
             return student.Enroll(course);
         }
 
-        // ========= BONUS 11 =========
+        // ========= BONUS
         public bool IsStudentEnrolledInCourse(int studentId, string courseTitle)
         {
             Student student = FindStudent(studentId);
@@ -187,7 +187,7 @@ namespace StudentManagementSystem
             return false;
         }
 
-        // ========= BONUS 12 =========
+        // ========= BONUS
         public string GetInstructorNameByCourseName(string courseTitle)
         {
             for (int i = 0; i < CourseCount; i++)
